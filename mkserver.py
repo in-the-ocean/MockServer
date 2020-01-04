@@ -11,15 +11,28 @@ ADJS = ['Best','Worst']
 
 class Candidate:
     def __init__(self,Name,cid):
-        self.name = Name;
-        self.up= 0;
-        self.down= 0;
+        self.name = Name
+        self.votes = {}
         self.cid = cid
+        self.up= 0
+        self.down= 0
         
-    def voteUp(self):
+    def voteUp(self,uid):
+        if uid in self.votes:
+            if self.votes[uid] == "up":
+                return
+            else:
+                self.down-=1
+        self.votes[uid] = "up"
         self.up += 1;
 
-    def voteDown(self):
+    def voteDown(self,uid):
+        if uid in self.votes:
+            if self.votes[uid] == "down":
+                return
+            else:
+                self.up-=1
+        self.votes[uid] = "down"
         self.down += 1;
 
     def setCid(self,cid):
@@ -55,9 +68,9 @@ class RankList:
     def setActiveTime(self,time):
         self.info['activeTime'] = time
 
-def getMaxId(lists):
+def getMaxId(Dict):
     maximum =-1 
-    for key in lists.keys():
+    for key in Dict.keys():
         if key > maximum:
             maximum = key
     return maximum
@@ -73,6 +86,7 @@ for i in range(0,100):
         #lists[str(i)].candidates[str(j)].up = random.randrange(0,2000)
         #lists[str(i)].candidates[str(j)].down= random.randrange(0,800)
 
+'''
 users = {}
 for i in range(0,100):
     users[i] = {}
@@ -88,7 +102,19 @@ for i in range(0,100):
                     lists[key].candidates[cand].voteDown()
 
 print(users)
-         
+'''         
+users = []
+for i in range(0,100):
+    users.append(i)
+for lst in lists.keys():
+    for cand in lists[lst].candidates.keys():
+        for user in random.sample(users,random.randrange(0,80)):
+            vote = random.choice(['up','up','down'])
+            if vote == 'up':
+                lists[lst].candidates[cand].voteUp(user)
+            else:
+                lists[lst].candidates[cand].voteDown(user)
+
     
 
 
@@ -117,8 +143,8 @@ def ranklists():
                 return {}
         mId = getMaxId(lists)
         lists[mId+1] = RankList(pName, str(mId+1))
-        lists[mId+1].setCreateTime(dateTime.now())
-        lists[mId+1].setActiveTime(dateTime.now())
+        lists[mId+1].setCreateTime(datetime.now())
+        lists[mId+1].setActiveTime(datetime.now())
         return {} 
 
 @app.route('/api/ranklists/<Id>',methods = ['GET'])
@@ -140,8 +166,8 @@ def candidates(Id):
             abort(404)
         for key in lists[int(Id)].candidates.keys():
             myVote = "None"
-            if rUid != None and int(Id) in users[int(rUid)] and key in users[int(rUid)][int(Id)]:
-                myVote = users[int(rUid)][int(Id)][key]
+            if rUid != None and int(rUid) in lists[int(Id)].candidates[key].votes:
+                myVote = lists[int(Id)].candidates[key].votes[int(rUid)] 
             rCandidates.append({'name':lists[int(Id)].candidates[key].name,
                                 'cid':lists[int(Id)].candidates[key].cid,
                                 'voteUp':lists[int(Id)].candidates[key].up,
@@ -158,11 +184,17 @@ def candidates(Id):
                 return {}
         mId = getMaxId(lists[int(Id)].candidates)
         lists[int(Id)].candidates[mId+1] = Candidate(cName,str(mId+1))
-        if int(Id) not in users[int(uid)]:
-            users[int(uid)][int(Id)] = {}
-        users[int(uid)][int(Id)][mId+1] = 'up'
-        lists[int(Id)].candidates[mId+1].voteUp()
         lists[int(Id)].setActiveTime(datetime.now())
         return {}
+'''
+@app.route('/api/ranklists/<Id>/candidates/<cid>/vote',methods = ['PUT','DELETE'])
+def vote(Id,cid):
+'''
+
+
+
+
+
+
 
 

@@ -1,7 +1,7 @@
 import requests
 
 #requests.put('http://127.0.0.1:5000/api/ranklists',
- #                      data = {'name':'add00'})
+ #                      data = {'name':'added00'})
 requests.put('http://127.0.0.1:5000/api/ranklists/100/candidates',
                        data = {'name':'addcan00','uid':'27'})
 response = requests.get('http://127.0.0.1:5000/api/ranklists?name=added00')
