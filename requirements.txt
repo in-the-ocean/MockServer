@@ -9,5 +9,5 @@ MarkupSafe==1.1.1
 random2==1.0.1
 randomtimestamp==1.0.0
 requests==2.22.0
-urllib3==1.25.7
+urllib3==1.26.5
 Werkzeug==0.16.0
